@@ -31,10 +31,10 @@ public class Graph {
 
     public Graph findFreeDiamondGraph(Graph graph) {
         Graph result = new Graph(graph.verticesNum);
-        int count = 0;
+        int count = edges.size();
         graph.getEdges().sort(Comparator.comparingInt(Edge::getW).reversed());
         for (Edge e : graph.getEdges()) {
-            System.out.println(++count);
+            System.out.println(count--);
             result.addEdge(e.getU(), e.getV(), e.getW());
             if (containsDiamond(result)) {
                 result.removeEdge(e.getU(), e.getV());
@@ -45,22 +45,15 @@ public class Graph {
     }
 
     private boolean containsDiamond(Graph g) {
-        // Перебор всех комбинаций 4 вершин из графа
+        // Перебор комбинаций по соседям вершин
         for (int i = 0; i < g.verticesNum; i++) {
-            for (int j = i + 1; j < g.verticesNum; j++) {
-                for (int k = j + 1; k < g.verticesNum; k++) {
-                    for (int l = k + 1; l < g.verticesNum; l++) {
-                        // Проверка, что выбранные вершины образуют алмаз
-                        int countEdges = 0;
-                        if (g.adjacencyList.get(i).contains(j)) countEdges++;
-                        if (g.adjacencyList.get(i).contains(k)) countEdges++;
-                        if (g.adjacencyList.get(i).contains(l)) countEdges++;
-                        if (g.adjacencyList.get(j).contains(k)) countEdges++;
-                        if (g.adjacencyList.get(j).contains(l)) countEdges++;
-                        if (g.adjacencyList.get(k).contains(l)) countEdges++;
-                        if (countEdges == 5) {
-                            return true; // Найден алмаз
-                        }
+            if (g.adjacencyList.size() > 3) {
+                for (int j : g.adjacencyList.get(i)) {
+                    for (int k : g.adjacencyList.get(i)) {
+                        if (j == k)
+                            continue;
+                        if (g.adjacencyList.get(j).contains(k))
+                            return true;
                     }
                 }
             }
